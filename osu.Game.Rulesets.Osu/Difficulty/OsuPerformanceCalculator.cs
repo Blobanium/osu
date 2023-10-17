@@ -263,7 +263,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             int objectCount = attributes.HitCircleCount + attributes.SliderCount + attributes.SpinnerCount;
 
             //More objects that displayed on the screen at any given moment requires more memory. Lets just use the average amount of objects displayed on screen throught the beatmap as of right now.
-            memoryValue *= ((objectCount*getPreemptFromAR(attributes.ApproachRate)) / attributes.HitLength) * objectsOnScreenFactorMultiplier;
+            memoryValue *= ((objectCount*getPreemptFromAR(attributes.ApproachRate)) / attributes.HitLength) * objectsOnScreenFactorMultiplier / (effectiveMissCount+1);
 
             return memoryValue + flashlightValue;
         }
