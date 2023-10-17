@@ -221,16 +221,14 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             return accuracyValue;
         }
 
-        //This value is going to be up for debate.
-        private const double FL_MULTIPLIER = 1.0;
-
         //Memory Value, im going to leave the method name as is for someone else to refractor. Unless ppy or someone else requests me to do so.
         private double computeFlashlightValue(ScoreInfo score, OsuDifficultyAttributes attributes)
         {
+
             //Initialize the value
             double flashlightValue = 0.0;
 
-            //Because Flashlight (FL) Itself already requires TONS of memorization, thinking of buffing the base value due to how difficult FL can possibly get. However this will be up for debate.
+            //Original FL Code
             if (score.Mods.Any(h => h is OsuModFlashlight))
             {
                 flashlightValue = Math.Pow(attributes.FlashlightDifficulty, 2.0) * 25.0;
@@ -250,7 +248,8 @@ namespace osu.Game.Rulesets.Osu.Difficulty
                 // It is important to also consider accuracy difficulty when doing that.
                 flashlightValue *= 0.98 + Math.Pow(attributes.OverallDifficulty, 2) / 2500;
 
-                flashlightValue *= FL_MULTIPLIER;
+                //Final FL Multiplier. Up for debate. Thinking of buffing this value to somewhere around 1.2 due to how difficult FL plays can possibly get.
+                flashlightValue *= 1.0;
             }
 
             return flashlightValue;
