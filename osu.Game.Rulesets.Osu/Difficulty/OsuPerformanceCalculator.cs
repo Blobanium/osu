@@ -221,27 +221,37 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             return accuracyValue;
         }
 
+        //This value is going to be up for debate.
+        private const double FL_MULTIPLIER = 1.0;
+
+        //Memory Value, im going to leave the method name as is for someone else to refractor. Unless ppy or someone else requests me to do so.
         private double computeFlashlightValue(ScoreInfo score, OsuDifficultyAttributes attributes)
         {
-            if (!score.Mods.Any(h => h is OsuModFlashlight))
-                return 0.0;
+            //Initialize the value
+            double flashlightValue = 0.0;
 
-            double flashlightValue = Math.Pow(attributes.FlashlightDifficulty, 2.0) * 25.0;
+            //Because Flashlight (FL) Itself already requires TONS of memorization, thinking of buffing the base value due to how difficult FL can possibly get. However this will be up for debate.
+            if (score.Mods.Any(h => h is OsuModFlashlight))
+            {
+                flashlightValue = Math.Pow(attributes.FlashlightDifficulty, 2.0) * 25.0;
 
-            // Penalize misses by assessing # of misses relative to the total # of objects. Default a 3% reduction for any # of misses.
-            if (effectiveMissCount > 0)
-                flashlightValue *= 0.97 * Math.Pow(1 - Math.Pow(effectiveMissCount / totalHits, 0.775), Math.Pow(effectiveMissCount, .875));
+                // Penalize misses by assessing # of misses relative to the total # of objects. Default a 3% reduction for any # of misses.
+                if (effectiveMissCount > 0)
+                    flashlightValue *= 0.97 * Math.Pow(1 - Math.Pow(effectiveMissCount / totalHits, 0.775), Math.Pow(effectiveMissCount, .875));
 
-            flashlightValue *= getComboScalingFactor(attributes);
+                flashlightValue *= getComboScalingFactor(attributes);
 
-            // Account for shorter maps having a higher ratio of 0 combo/100 combo flashlight radius.
-            flashlightValue *= 0.7 + 0.1 * Math.Min(1.0, totalHits / 200.0) +
-                               (totalHits > 200 ? 0.2 * Math.Min(1.0, (totalHits - 200) / 200.0) : 0.0);
+                // Account for shorter maps having a higher ratio of 0 combo/100 combo flashlight radius.
+                flashlightValue *= 0.7 + 0.1 * Math.Min(1.0, totalHits / 200.0) +
+                                (totalHits > 200 ? 0.2 * Math.Min(1.0, (totalHits - 200) / 200.0) : 0.0);
 
-            // Scale the flashlight value with accuracy _slightly_.
-            flashlightValue *= 0.5 + accuracy / 2.0;
-            // It is important to also consider accuracy difficulty when doing that.
-            flashlightValue *= 0.98 + Math.Pow(attributes.OverallDifficulty, 2) / 2500;
+                // Scale the flashlight value with accuracy _slightly_.
+                flashlightValue *= 0.5 + accuracy / 2.0;
+                // It is important to also consider accuracy difficulty when doing that.
+                flashlightValue *= 0.98 + Math.Pow(attributes.OverallDifficulty, 2) / 2500;
+
+                flashlightValue *= FL_MULTIPLIER;
+            }
 
             return flashlightValue;
         }
