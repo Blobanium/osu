@@ -224,11 +224,16 @@ namespace osu.Game.Rulesets.Osu.Difficulty
         //Memory Value, im going to leave the method name as is for someone else to refractor. Unless ppy or someone else requests me to do so.
         private double computeFlashlightValue(ScoreInfo score, OsuDifficultyAttributes attributes)
         {
+            //Constant values up for debate
+            double flashlightMultiplier = 1.0;
+            double baseMemoryValueConstant = 1.0;
+            double objectsOnScreenFactorMultiplier = 5.0;
 
-            //Initialize the value
+            //Initialize the values.
+            double memoryValue = 0.0;
             double flashlightValue = 0.0;
 
-            //Original FL Code
+            //Original FL Code, FL alone already requires tons of memory to be viably doable.
             if (score.Mods.Any(h => h is OsuModFlashlight))
             {
                 flashlightValue = Math.Pow(attributes.FlashlightDifficulty, 2.0) * 25.0;
@@ -249,10 +254,18 @@ namespace osu.Game.Rulesets.Osu.Difficulty
                 flashlightValue *= 0.98 + Math.Pow(attributes.OverallDifficulty, 2) / 2500;
 
                 //Final FL Multiplier. Up for debate. Thinking of buffing this value to somewhere around 1.2 due to how difficult FL plays can possibly get.
-                flashlightValue *= 1.0;
+                flashlightValue *= flashlightMultiplier;
             }
 
-            return flashlightValue;
+            //Base Memory Stat for the Non-FL Portion. This is genuinely up for debate on what will end up being in here.
+            memoryValue += baseMemoryValueConstant / (effectiveMissCount+1);
+
+            int objectCount = attributes.HitCircleCount + attributes.SliderCount + attributes.SpinnerCount;
+
+            //More objects that displayed on the screen at any given moment requires more memory. Lets just use the average amount of objects displayed on screen throught the beatmap as of right now.
+            memoryValue *= ((objectCount*getPreemptFromAR(attributes.ApproachRate)) / attributes.HitLength) * objectsOnScreenFactorMultiplier;
+
+            return memoryValue + flashlightValue;
         }
 
         private double calculateEffectiveMissCount(OsuDifficultyAttributes attributes)
@@ -275,5 +288,15 @@ namespace osu.Game.Rulesets.Osu.Difficulty
 
         private double getComboScalingFactor(OsuDifficultyAttributes attributes) => attributes.MaxCombo <= 0 ? 1.0 : Math.Min(Math.Pow(scoreMaxCombo, 0.8) / Math.Pow(attributes.MaxCombo, 0.8), 1.0);
         private int totalHits => countGreat + countOk + countMeh + countMiss;
+
+        private double getPreemptFromAR(double approachRate)
+        {
+            if (approachRate < 5)
+                return (1200 + 600 * (5 - approachRate) / 5);
+            else if (approachRate == 5)
+                return 1200;
+            else //if (approachRate > 5) [this isnt really needed at all because it knows both clauses arent true]
+                return 1200 - 750 * (approachRate - 5) / 5;
+        }
     }
 }

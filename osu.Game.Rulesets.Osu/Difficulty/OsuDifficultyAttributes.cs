@@ -84,6 +84,11 @@ namespace osu.Game.Rulesets.Osu.Difficulty
         /// </summary>
         public int SpinnerCount { get; set; }
 
+        /// <summary>
+        /// The playable length in milliseconds of the beatmap.
+        /// </summary>
+        public double HitLength {get; set;}
+
         public override IEnumerable<(int attributeId, object value)> ToDatabaseAttributes()
         {
             foreach (var v in base.ToDatabaseAttributes())
@@ -119,6 +124,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             HitCircleCount = onlineInfo.CircleCount;
             SliderCount = onlineInfo.SliderCount;
             SpinnerCount = onlineInfo.SpinnerCount;
+            HitLength = onlineInfo.HitLength;
         }
 
         #region Newtonsoft.Json implicit ShouldSerialize() methods

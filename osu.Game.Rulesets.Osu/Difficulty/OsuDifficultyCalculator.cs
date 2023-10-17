@@ -82,6 +82,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
             int hitCirclesCount = beatmap.HitObjects.Count(h => h is HitCircle);
             int sliderCount = beatmap.HitObjects.Count(h => h is Slider);
             int spinnerCount = beatmap.HitObjects.Count(h => h is Spinner);
+            double hitLength = BeatmapExtensions.CalculatePlayableLength(beatmap.HitObjects);
 
             HitWindows hitWindows = new OsuHitWindows();
             hitWindows.SetDifficulty(beatmap.Difficulty.OverallDifficulty);
@@ -104,6 +105,7 @@ namespace osu.Game.Rulesets.Osu.Difficulty
                 HitCircleCount = hitCirclesCount,
                 SliderCount = sliderCount,
                 SpinnerCount = spinnerCount,
+                HitLength = hitLength,
             };
 
             return attributes;
