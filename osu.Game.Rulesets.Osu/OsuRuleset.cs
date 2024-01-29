@@ -62,7 +62,9 @@ namespace osu.Game.Rulesets.Osu
         {
             new KeyBinding(InputKey.Z, OsuAction.LeftButton),
             new KeyBinding(InputKey.X, OsuAction.RightButton),
-            new KeyBinding(InputKey.C, OsuAction.Smoke),
+            new KeyBinding(InputKey.C, OsuAction.Button3),
+            new KeyBinding(InputKey.V, OsuAction.Button4),
+            new KeyBinding(InputKey.B, OsuAction.Smoke),
             new KeyBinding(InputKey.MouseLeft, OsuAction.LeftButton),
             new KeyBinding(InputKey.MouseRight, OsuAction.RightButton),
         };
