@@ -78,6 +78,9 @@ namespace osu.Game.Rulesets.Osu
             /// <remarks>
             /// Of note, auxiliary inputs like the "smoke" key are left usable.
             /// </remarks>
+
+
+
             public bool AllowGameplayInputs
             {
                 get => allowGameplayInputs;
@@ -111,13 +114,14 @@ namespace osu.Game.Rulesets.Osu
         [Description("Button 2")]
         RightButton,
 
-        [Description("Smoke")]
-        Smoke,
-
         [Description("Button 3")]
         Button3,
 
         [Description("Button 4")]
         Button4,
+
+        [Description("Smoke")]
+        Smoke,
+
     }
 }

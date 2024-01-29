@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Graphics;
+using osu.Framework.Logging;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects;
@@ -265,11 +266,17 @@ namespace osu.Game.Rulesets.Osu.Replays
                 }
             }
 
+            Logger.Log($"TimeDiff= {timeDifference}");
+
             // Start alternating once the time separation is too small (faster than ~225BPM).
-            if (timeDifference > 0 && timeDifference < 266)
+            if (timeDifference > 0 && timeDifference < 66)
+            {
                 buttonIndex++;
+            }
             else
                 buttonIndex = 0;
+
+            Logger.Log($"ButtonIndex= {buttonIndex}");
         }
 
         /// <summary>
@@ -285,7 +292,13 @@ namespace osu.Game.Rulesets.Osu.Replays
         {
             // Time to insert the first frame which clicks the object
             // Here we mainly need to determine which button to use
-            var action = buttonIndex % 2 == 0 ? OsuAction.LeftButton : OsuAction.RightButton;
+            var action = buttonIndex % 4 == 0
+                ? OsuAction.LeftButton
+                : buttonIndex % 4 == 1
+                    ? OsuAction.RightButton
+                    : buttonIndex % 4 == 2
+                        ? OsuAction.Button3  // Handle Button3
+                        : OsuAction.Button4;  // Handle Button4
 
             var startFrame = new OsuReplayFrame(h.StartTime, new Vector2(startPosition.X, startPosition.Y), action);
 

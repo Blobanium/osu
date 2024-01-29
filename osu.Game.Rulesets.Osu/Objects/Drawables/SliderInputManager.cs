@@ -262,7 +262,7 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             if (hitAction.HasValue && (!timeToAcceptAnyKeyAfter.HasValue || Time.Current <= timeToAcceptAnyKeyAfter.Value))
                 return action == hitAction;
 
-            return action == OsuAction.LeftButton || action == OsuAction.RightButton;
+            return action == OsuAction.LeftButton || action == OsuAction.RightButton || action == OsuAction.Button3 || action == OsuAction.Button4;
         }
     }
 }

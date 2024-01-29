@@ -261,8 +261,11 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
 
             public bool OnPressed(KeyBindingPressEvent<OsuAction> e)
             {
+
                 switch (e.Action)
                 {
+                    case OsuAction.Button4:
+                    case OsuAction.Button3:
                     case OsuAction.LeftButton:
                     case OsuAction.RightButton:
                         if (IsHovered && (Hit?.Invoke() ?? false))

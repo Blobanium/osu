@@ -278,7 +278,7 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             if (HandleUserInput)
             {
                 bool isValidSpinningTime = Time.Current >= HitObject.StartTime && Time.Current <= HitObject.EndTime;
-                bool correctButtonPressed = (OsuActionInputManager?.PressedActions.Any(x => x == OsuAction.LeftButton || x == OsuAction.RightButton) ?? false);
+                bool correctButtonPressed = (OsuActionInputManager?.PressedActions.Any(x => x == OsuAction.LeftButton || x == OsuAction.RightButton || x == OsuAction.Button3 || x == OsuAction.Button4) ?? false);
 
                 RotationTracker.Tracking = !Result.HasResult
                                            && correctButtonPressed
