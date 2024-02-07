@@ -80,6 +80,13 @@ namespace osu.Game
     [Cached(typeof(OsuGame))]
     public partial class OsuGame : OsuGameBase, IKeyBindingHandler<GlobalAction>, ILocalUserPlayInfo, IPerformFromScreenRunner, IOverlayManager, ILinkHandler
     {
+#if DEBUG
+        // Different port allows runnning release and debug builds alongside each other.
+        public const int IPC_PORT = 44824;
+#else
+        public const int IPC_PORT = 44823;
+#endif
+
         /// <summary>
         /// The amount of global offset to apply when a left/right anchored overlay is displayed (ie. settings or notifications).
         /// </summary>
@@ -994,8 +1001,11 @@ namespace osu.Game
                 Margin = new MarginPadding(5),
             }, topMostOverlayContent.Add);
 
-            if (!args?.Any(a => a == @"--no-version-overlay") ?? true)
-                loadComponentSingleFile(versionManager = new VersionManager { Depth = int.MinValue }, ScreenContainer.Add);
+            if (!IsDeployedBuild)
+            {
+                dependencies.Cache(versionManager = new VersionManager { Depth = int.MinValue });
+                loadComponentSingleFile(versionManager, ScreenContainer.Add);
+            }
 
             loadComponentSingleFile(osuLogo, _ =>
             {
@@ -1077,6 +1087,7 @@ namespace osu.Game
             Add(difficultyRecommender);
             Add(externalLinkOpener = new ExternalLinkOpener());
             Add(new MusicKeyBindingHandler());
+            Add(new OnlineStatusNotifier(() => ScreenStack.CurrentScreen));
 
             // side overlays which cancel each other.
             var singleDisplaySideOverlays = new OverlayContainer[] { Settings, Notifications, FirstRunOverlay };
@@ -1189,7 +1200,7 @@ namespace osu.Game
                 }
                 else if (recentLogCount == short_term_display_limit)
                 {
-                    string logFile = $@"{entry.Target.Value.ToString().ToLowerInvariant()}.log";
+                    string logFile = Logger.GetLogger(entry.Target.Value).Filename;
 
                     Schedule(() => Notifications.Post(new SimpleNotification
                     {
@@ -1197,7 +1208,7 @@ namespace osu.Game
                         Text = NotificationsStrings.SubsequentMessagesLogged,
                         Activated = () =>
                         {
-                            Storage.GetStorageForDirectory(@"logs").PresentFileExternally(logFile);
+                            Logger.Storage.PresentFileExternally(logFile);
                             return true;
                         }
                     }));
